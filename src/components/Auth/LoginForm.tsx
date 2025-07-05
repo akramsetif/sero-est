@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { User, Lock, Construction, Eye, EyeOff } from 'lucide-react';
+import { User, Lock, Construction, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { isSupabaseConfigured } from '../../lib/supabase';
 
 interface LoginFormProps {
   onLogin: (nom: string, motDePasse: string) => Promise<any>;
@@ -11,6 +12,8 @@ export default function LoginForm({ onLogin }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const isConfigured = isSupabaseConfigured();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +45,19 @@ export default function LoginForm({ onLogin }: LoginFormProps) {
           <p className="text-slate-600 font-medium">Gestion Topographique</p>
           <div className="w-16 h-1 bg-gradient-to-r from-orange-500 to-red-500 mx-auto mt-2 rounded-full"></div>
         </div>
+
+        {/* Configuration Status */}
+        {!isConfigured && (
+          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+            <div className="flex items-center space-x-2 text-amber-800">
+              <AlertCircle className="h-4 w-4" />
+              <span className="text-sm font-medium">Mode développement</span>
+            </div>
+            <p className="text-xs text-amber-700 mt-1">
+              Supabase non configuré. Utilisation des données locales.
+            </p>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
@@ -128,6 +144,13 @@ export default function LoginForm({ onLogin }: LoginFormProps) {
               disabled={isLoading}
             >
               <span className="font-medium">Topographe:</span> Akram / akram123
+            </button>
+            <button
+              onClick={() => handleDemoLogin('Bachir', 'bachir123')}
+              className="block w-full text-left p-2 bg-white rounded border hover:bg-slate-50 transition-colors"
+              disabled={isLoading}
+            >
+              <span className="font-medium">Topographe:</span> Bachir / bachir123
             </button>
           </div>
         </div>
